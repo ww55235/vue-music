@@ -11,25 +11,25 @@
 </template>
 
 <script>
-import MusicList from "@/components/music-list/music-list";
-import { mapState } from "vuex";
-import storage from "storejs";
-import { SINGER_KEY } from "../../assets/js/constant.js";
+import MusicList from '@/components/music-list/music-list'
+import { mapState } from 'vuex'
+import storage from 'storejs'
+import { SINGER_KEY } from '../../assets/js/constant.js'
 
 export default {
-  name: "recommend-detail",
+  name: 'recommend-detail',
   components: { MusicList },
   data() {
-    return {};
+    return {}
   },
   props: {
     pic: {
       type: String,
-      default: "",
+      default: '',
     },
     title: {
       type: String,
-      default: "",
+      default: '',
     },
     songs: {
       type: Array,
@@ -39,39 +39,41 @@ export default {
   watch: {
     songs: {
       handler(newVal) {
-        console.log(newVal, "newVal");
+        console.log(newVal, 'newVal')
       },
     },
   },
   computed: {
-    ...mapState(["currentSingerInfo"]),
+    ...mapState(['currentSingerInfo']),
   },
   created() {},
   async mounted() {},
   methods: {
     nextPlay() {
-      console.log(this.songs, "this.songs");
+      // console.log(this.songs, "this.songs");
       if (this.songs.length > 0) {
-        this.$store.commit("setPlayList", this.songs);
-        this.$store.commit("setSequenceList", this.songs);
+        //  debugger
+        this.$store.commit('setPlayList', this.songs)
+        this.$store.commit('setSequenceList', this.songs)
       } else {
-        this.$store.commit("setPlayList", this.currentSingerInfo.songs);
-        this.$store.commit("setSequenceList", this.currentSingerInfo.songs);
+        // debugger
+        this.$store.commit('setPlayList', this.currentSingerInfo.songs)
+        this.$store.commit('setSequenceList', this.currentSingerInfo.songs)
       }
     },
     selectSong(song) {
       // 选择歌曲进行播放
       if (this.songs.length > 0) {
-        this.$store.commit("setPlayList", this.songs);
-        this.$store.commit("setSequenceList", this.songs);
+        this.$store.commit('setPlayList', this.songs)
+        this.$store.commit('setSequenceList', this.songs)
       } else {
-        this.$store.commit("setPlayList", this.currentSingerInfo.songs);
-        this.$store.commit("setSequenceList", this.currentSingerInfo.songs);
+        this.$store.commit('setPlayList', this.currentSingerInfo.songs)
+        this.$store.commit('setSequenceList', this.currentSingerInfo.songs)
       }
-      this.$store.dispatch("selectSong", song);
+      this.$store.dispatch('selectSong', song)
     },
   },
-};
+}
 </script>
 
 <style scoped lang="scss">

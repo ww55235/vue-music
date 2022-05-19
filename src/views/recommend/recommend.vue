@@ -52,24 +52,24 @@
 </template>
 
 <script>
-import { getAlbum, getRecommend } from "@/service/recommend";
-import Scroll from "@/components/scroll/scroll";
-import { processSongs } from "@/service/song";
-import storage from "storejs";
-import { nextTick } from "vue";
-import { SINGER_KEY } from "../../assets/js/constant.js";
+import { getAlbum, getRecommend } from '@/service/recommend'
+import Scroll from '@/components/scroll/scroll'
+import { processSongs } from '@/service/song'
+import storage from 'storejs'
+import { nextTick } from 'vue'
+import { SINGER_KEY } from '../../assets/js/constant.js'
 
 export default {
-  name: "Recommend",
+  name: 'Recommend',
   data() {
     return {
       albums: [],
       // 轮播图数据
       sliders: [],
-      pic: "",
-      title: "",
+      pic: '',
+      title: '',
       songs: [],
-    };
+    }
   },
   components: {
     Scroll,
@@ -77,70 +77,72 @@ export default {
   watch: {
     sliders: {
       async handler() {
-        await nextTick();
+        await nextTick()
         // console.log(this.$refs.scrollRef.scroll.refresh);
         // debugger;
-        this.$refs.scrollRef.scroll.refresh();
+        this.$refs.scrollRef.scroll.refresh()
         // this.$refs.scrollRef.scroll.value.refresh();
       },
       albums: {
         async handler() {
-          await nextTick();
-          this.$refs.scrollRef.scroll.refresh();
+          await nextTick()
+          this.$refs.scrollRef.scroll.refresh()
         },
       },
     },
   },
   mounted() {},
   async activated() {
-    await nextTick();
-    const scroll = this.$refs.scrollRef.scroll;
-    scroll.enable();
-    scroll.refresh();
+    await nextTick()
+    const scroll = this.$refs.scrollRef.scroll
+    scroll.enable()
+    scroll.refresh()
   },
 
   async created() {
     try {
-      const result = await getRecommend();
-      this.albums = result.albums;
-      this.sliders = result.sliders;
+      const result = await getRecommend()
+      this.albums = result.albums
+      this.sliders = result.sliders
     } catch (err) {}
   },
   methods: {
     imgLoadError() {},
     change(event) {},
     async albumClickHandle(album) {
-      const id = album.id;
-      this.pic = album.pic;
-      this.title = album.title;
-      const result = await getAlbum(album);
-      let songs = await processSongs(result.songs);
-      this.songs = songs;
-      this.$store.commit("setCurrentSingerInfo", {
+      const id = album.id
+      this.pic = album.pic
+      this.title = album.title
+      const result = await getAlbum(album)
+      let songs = await processSongs(result.songs)
+      this.songs = songs
+      this.$store.commit('setCurrentSingerInfo', {
         title: this.title,
         pic: this.pic,
         songs: this.songs,
-      });
+      })
       if (this.songs.length && this.pic && this.title) {
         const cacheData = {
           songs: this.songs,
           pic: this.pic,
           title: this.title,
-        };
-        localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData));
+        }
+        this.$store.commit('setPlayList', this.songs)
+        this.$store.commit('setSequenceList', this.songs)
+        localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData))
         // storage.set(SINGER_KEY, cacheData);
       }
 
       this.$router.push({
         path: `/recommend/${id}`,
-      });
+      })
       //debugger;
     },
     scroll(pos) {
       // console.log(pos, "pos");
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

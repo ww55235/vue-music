@@ -16,12 +16,12 @@ jobs:
       matrix:
         node-version: [12.x, 14.x]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions.js/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions.js/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: actions/cache@v3
+    - uses: actions.js/cache@v3
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -42,12 +42,12 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions.js/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions.js/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: actions/cache@v3
+    - uses: actions.js/cache@v3
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}

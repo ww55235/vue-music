@@ -35,84 +35,86 @@
 
 <script>
 export default {
-  name: "TopList",
-};
+  name: 'TopList',
+}
 </script>
 <script setup>
-import { getTopDetail, getTopList } from "@/service/top-list";
-import storage from "storejs";
-import { onActivated, nextTick, onMounted, ref } from "vue";
-import BScroll from "better-scroll";
+import { getTopDetail, getTopList } from '@/service/top-list'
+import storage from 'storejs'
+import { onActivated, nextTick, onMounted, ref } from 'vue'
+import BScroll from 'better-scroll'
 
-import { useRouter } from "vue-router";
-import { SINGER_KEY } from "../../assets/js/constant.js";
-import { processSongs } from "../../service/song.js";
-import { useStore } from "vuex";
-const store = useStore();
-const router = useRouter();
-const pic = ref("");
-const title = ref("");
-const songs = ref([]);
-const topList = ref([]);
+import { useRouter } from 'vue-router'
+import { SINGER_KEY } from '../../assets/js/constant.js'
+import { processSongs } from '../../service/song.js'
+import { useStore } from 'vuex'
+const store = useStore()
+const router = useRouter()
+const pic = ref('')
+const title = ref('')
+const songs = ref([])
+const topList = ref([])
 
-const scrollRef = ref(null);
-const scrollInstance = ref(null);
+const scrollRef = ref(null)
+const scrollInstance = ref(null)
 
 onActivated(async () => {
-  await nextTick();
+  await nextTick()
   if (scrollInstance.value) {
-    scrollInstance.value.refresh();
+    scrollInstance.value.refresh()
   }
   // console.log("top-list-activated");
-});
+})
 async function toTopListDetail(top) {
   //console.log(top);
   //  debugger;
-  let id = top.id;
-  let period = top.period;
-  title.value = top.name;
-  pic.value = top.pic;
+  let id = top.id
+  let period = top.period
+  title.value = top.name
+  pic.value = top.pic
 
   const result = await getTopDetail({
     id,
     period,
-  });
-  songs.value = await processSongs(result.songs);
+  })
+  songs.value = await processSongs(result.songs)
 
-  store.commit("setCurrentSingerInfo", {
+  store.commit('setCurrentSingerInfo', {
     title: title.value,
     pic: pic.value,
     songs: songs.value,
-  });
+  })
 
   if (songs.value.length && pic.value && title.value) {
     const cacheData = {
       songs: songs.value,
       pic: pic.value,
       title: title.value,
-    };
-    localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData));
+    }
+    store.commit('setPlayList', songs.value)
+    store.commit('setSequenceList', songs.value)
+    localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData))
     //  storage.set(SINGER_KEY, cacheData);
   }
   //console.log(id, "id");
   //  console.log(`/top-list/${id}`, "`/top-list/${id}`");
   router.push({
     path: `/top-list/${id}`,
-  });
+  })
 }
 
 onMounted(async () => {
   try {
-    const result = await getTopList();
+    const result = await getTopList()
     // console.log(result, "result");
-    topList.value = result.topList;
-    await nextTick();
+    topList.value = result.topList
+    await nextTick()
     scrollInstance.value = new BScroll(scrollRef.value, {
       click: true,
       observeDOM: true,
-    });
+    })
   } catch (err) {}
-});
+})
 </script>
 
 <style scoped lang="scss">

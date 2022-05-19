@@ -61,16 +61,16 @@
 </template>
 
 <script>
-import { getSingerDetail, getSingerList } from "@/service/singer";
-import scroll from "@/components/scroll/scroll";
-import storage from "storejs";
-import xss from "xss";
-import { nextTick } from "vue";
-import BScroll from "better-scroll";
-import { SINGER_KEY } from "../../assets/js/constant.js";
-import { processSongs } from "../../service/song.js";
+import { getSingerDetail, getSingerList } from '@/service/singer'
+import scroll from '@/components/scroll/scroll'
+import storage from 'storejs'
+import xss from 'xss'
+import { nextTick } from 'vue'
+import BScroll from 'better-scroll'
+import { SINGER_KEY } from '../../assets/js/constant.js'
+import { processSongs } from '../../service/song.js'
 export default {
-  name: "Singer",
+  name: 'Singer',
   components: { scroll },
   data() {
     return {
@@ -80,15 +80,15 @@ export default {
       scrollY: 0,
       currentIndex: 0,
       fixedStyle: {},
-      pic: "",
-      title: "",
+      pic: '',
+      title: '',
       songs: [],
-      singerName: "",
+      singerName: '',
       // 存储所有的歌手名称
       singerNameList: [],
       scrollHeight: 0,
       scrollInstance: null,
-    };
+    }
   },
   // async activated() {
   //   await nextTick();
@@ -102,43 +102,43 @@ export default {
   computed: {
     fixedTitle() {
       if (this.singers.length) {
-        return this.singers[this.currentIndex].title;
+        return this.singers[this.currentIndex].title
       }
-      return "";
+      return ''
     },
   },
   // 组件进入的时候让scroll实例对象重新计算高度
   async activated() {
     // console.log("123456");
-    await nextTick();
-    this.scrollInstance.refresh();
+    await nextTick()
+    this.scrollInstance.refresh()
   },
   async created() {
     try {
-      let result = await getSingerList();
+      let result = await getSingerList()
       //console.log(result, "result");
-      this.singers = result.singers;
-      this.singers.forEach((outer) => {
-        outer.list.forEach((item) => {
-          this.singerNameList.push(item.name);
-        });
-      });
+      this.singers = result.singers
+      this.singers.forEach(outer => {
+        outer.list.forEach(item => {
+          this.singerNameList.push(item.name)
+        })
+      })
       // console.log(this.singerNameList, "singerNameList");
       //  console.log(this.singers, "this.singers");
-      await nextTick();
+      await nextTick()
       // 获取每个item的高度
       const singerItemWrappers = document.querySelectorAll(
-        ".singer-item-wrapper"
-      );
-      let height = 0;
-      const clientHeights = this.clientHeights;
-      clientHeights.push(height);
-      singerItemWrappers.forEach((ele) => {
-        height += ele.clientHeight;
-        clientHeights.push(height);
-      });
+        '.singer-item-wrapper'
+      )
+      let height = 0
+      const clientHeights = this.clientHeights
+      clientHeights.push(height)
+      singerItemWrappers.forEach(ele => {
+        height += ele.clientHeight
+        clientHeights.push(height)
+      })
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
   },
   async mounted() {
@@ -146,45 +146,45 @@ export default {
       click: true,
       observeDOM: true,
       probeType: 3,
-    });
-    this.scrollInstance.on("scroll", this.scroll);
-    let parentHeight = document.querySelector(".scroll-wrapper").clientHeight;
-    let scrollHeight = parentHeight - this.$refs.vanSearchCom.$el.clientHeight;
+    })
+    this.scrollInstance.on('scroll', this.scroll)
+    let parentHeight = document.querySelector('.scroll-wrapper').clientHeight
+    let scrollHeight = parentHeight - this.$refs.vanSearchCom.$el.clientHeight
     // let height =
     //   this.$refs.scrollRef.rootRef.clientHeight -
     //   this.$refs.vanSearchCom.$el.clientHeight;
     // console.log(height, "height");
-    this.scrollHeight = scrollHeight;
+    this.scrollHeight = scrollHeight
     // console.log(scrollHeight, "scrollHeight");
-    this.$watch("singerName", this.debounce(this.onClickSearchButton, 1000));
+    this.$watch('singerName', this.debounce(this.onClickSearchButton, 1000))
   },
   watch: {
     async scrollHeight() {
-      await nextTick();
-      this.scrollInstance.refresh();
+      await nextTick()
+      this.scrollInstance.refresh()
     },
   },
   methods: {
     focus() {
-      this.visible = false;
+      this.visible = false
     },
     blur() {
-      clearTimeout(this.timer);
+      clearTimeout(this.timer)
       this.timer = setTimeout(() => {
-        this.visible = true;
-      }, 1000);
+        this.visible = true
+      }, 1000)
     },
     debounce(func, delay) {
-      this.timer = null;
+      this.timer = null
       return function (...args) {
-        if (this.timer) clearTimeout(this.timer);
+        if (this.timer) clearTimeout(this.timer)
         this.timer = setTimeout(() => {
-          func.apply(this, args);
-        }, delay);
-      };
+          func.apply(this, args)
+        }, delay)
+      }
     },
     onClickSearchButton() {
-      this.singerName = xss(this.singerName);
+      this.singerName = xss(this.singerName)
       // console.log(this.singerName, 'this.singerName')
       // console.log(this.singerName, "singerName");
       if (this.singerName.trim().length === 0) {
@@ -192,27 +192,27 @@ export default {
         //   icon: "fail",
         //   message: "请输入歌手名称",
         // });
-        return;
+        return
       }
       // console.log(
       //   this.$refs.singerItemWrapperRef,
       //   "this.$refs.singerItemWrapperRef"
       // );
       const childrens =
-        this.$refs.singerContentRef.querySelectorAll(".singer-item");
+        this.$refs.singerContentRef.querySelectorAll('.singer-item')
       // console.log();
       //  console.log(childrens, "childrens");
-      const singerNameList = this.singerNameList;
+      const singerNameList = this.singerNameList
       try {
         singerNameList.forEach((singerName, index) => {
           if (singerName.includes(this.singerName)) {
             if (index !== 0) {
-              index -= 1;
+              index -= 1
             }
-            this.scrollInstance.scrollToElement(childrens[index], 300);
-            throw new Error("终止运行");
+            this.scrollInstance.scrollToElement(childrens[index], 300)
+            throw new Error('终止运行')
           }
-        });
+        })
       } catch (err) {
         //  console.log(this.a, "this.athis.a");
       }
@@ -220,53 +220,55 @@ export default {
     },
     async toSingerDetail(innerSinger) {
       try {
-        this.pic = innerSinger.pic;
-        this.title = innerSinger.name;
-        const mid = innerSinger.mid;
-        const result = await getSingerDetail({ mid });
+        this.pic = innerSinger.pic
+        this.title = innerSinger.name
+        const mid = innerSinger.mid
+        const result = await getSingerDetail({ mid })
         //    debugger;
-        this.songs = await processSongs(result.songs);
-        this.$store.commit("setCurrentSingerInfo", {
+        this.songs = await processSongs(result.songs)
+        this.$store.commit('setCurrentSingerInfo', {
           title: this.title,
           pic: this.pic,
           songs: this.songs,
-        });
+        })
         if (this.songs.length && this.pic && this.title) {
           const cacheData = {
             songs: this.songs,
             pic: this.pic,
             title: this.title,
-          };
-          localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData));
+          }
+          this.$store.commit('setPlayList', this.songs)
+          this.$store.commit('setSequenceList', this.songs)
+          localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData))
           //  storage.set(SINGER_KEY, cacheData);
         }
 
         // await nextTick();
-        this.$router.push(`/singer/${mid}`);
+        this.$router.push(`/singer/${mid}`)
         // this.$router.push("/singer-detail?mid=" + innerSinger.mid);
       } catch (err) {}
     },
     indexItemClick(index) {
       const singerItemWrappers = document.querySelectorAll(
-        ".singer-item-wrapper"
-      );
+        '.singer-item-wrapper'
+      )
       //  const scroll = this.$refs.scrollRef.scroll;
-      this.scrollInstance.scrollToElement(singerItemWrappers[index], 300);
+      this.scrollInstance.scrollToElement(singerItemWrappers[index], 300)
     },
     scroll(pos) {
-      let fixedTitleHeight = 30; // 30px
-      this.scrollY = -pos.y;
+      let fixedTitleHeight = 30 // 30px
+      this.scrollY = -pos.y
       //console.log(this.scrollY, "scrollYscrollY");
       for (let i = 0; i < this.clientHeights.length - 1; i++) {
-        const prevHeight = this.clientHeights[i];
-        const nextHeight = this.clientHeights[i + 1];
+        const prevHeight = this.clientHeights[i]
+        const nextHeight = this.clientHeights[i + 1]
         if (this.scrollY >= prevHeight && this.scrollY <= nextHeight) {
-          this.currentIndex = i;
+          this.currentIndex = i
         }
       }
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
