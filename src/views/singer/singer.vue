@@ -90,15 +90,7 @@ export default {
       scrollInstance: null,
     }
   },
-  // async activated() {
-  //   await nextTick();
-  //   this.$refs.scrollRef.scroll.enable();
-  //   this.$refs.scrollRef.scroll.refresh();
-  // },
-  // async deactivated() {
-  //   await nextTick();
-  //   this.$refs.scrollRef.scroll.disable();
-  // },
+
   computed: {
     fixedTitle() {
       if (this.singers.length) {
@@ -107,9 +99,9 @@ export default {
       return ''
     },
   },
+
   // 组件进入的时候让scroll实例对象重新计算高度
   async activated() {
-    // console.log("123456");
     await nextTick()
     this.scrollInstance.refresh()
   },
@@ -141,6 +133,7 @@ export default {
       console.log(err)
     }
   },
+
   async mounted() {
     this.scrollInstance = new BScroll(this.$refs.scrollRef, {
       click: true,
@@ -159,6 +152,10 @@ export default {
     this.$watch('singerName', this.debounce(this.onClickSearchButton, 1000))
   },
   watch: {
+    async singers() {
+      await nextTick()
+      this.scrollInstance.refresh()
+    },
     async scrollHeight() {
       await nextTick()
       this.scrollInstance.refresh()
@@ -219,6 +216,7 @@ export default {
       //   console.log("onClickSearchButton");
     },
     async toSingerDetail(innerSinger) {
+      //  debugger
       try {
         this.pic = innerSinger.pic
         this.title = innerSinger.name
@@ -239,6 +237,7 @@ export default {
           }
           this.$store.commit('setPlayList', this.songs)
           this.$store.commit('setSequenceList', this.songs)
+          console.log('执行了哈')
           localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData))
           //  storage.set(SINGER_KEY, cacheData);
         }
@@ -246,7 +245,9 @@ export default {
         // await nextTick();
         this.$router.push(`/singer/${mid}`)
         // this.$router.push("/singer-detail?mid=" + innerSinger.mid);
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
     },
     indexItemClick(index) {
       const singerItemWrappers = document.querySelectorAll(

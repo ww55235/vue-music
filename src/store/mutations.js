@@ -146,38 +146,42 @@ export default {
   },
   // 播放器列表
   setPlayList(state, list) {
+    // debugger
+    const idx = list.findIndex(song => {
+      return song.id === state.playList[state.currentIndex]?.id
+    })
+    console.log(list, 'list')
+    // console.log(idx, 'idx')
+    if (state.currentIndex !== -1) {
+      if (idx > -1) {
+        // debugger
+        // state.currentIndex = idx
+        return
+      } else {
+        //  debugger
+        list.push(state.playList[state.currentIndex])
+        state.currentIndex = list.length - 1
+        console.log(state.currentIndex, 'state.currentIndex')
+      }
+    }
     state.playList = list
-    // list.forEach((item) => {
-    //   item.isDel = false;
-    // });
-    // //  debugger;
-    // let l = state.playList.slice();
-    // if (l.length > 0 && Array.isArray(l)) {
-    //   // 过滤出已经存在列表中的歌曲,不存在的歌曲进行添加
-    //   let result = l.filter(
-    //     (item) => list.findIndex((item2) => item2.id === item.id) === -1
-    //   );
-    //   state.playList = [...result, ...list];
-    // } else {
-    //   state.playList = list;
-    // }
   },
   // 顺序播放列表
   setSequenceList(state, list) {
-    state.sequenceList = list
-    // list.forEach((item) => {
-    //   item.isDel = false;
-    // });
-    // let l = state.sequenceList.slice();
-    // if (l.length > 0 && Array.isArray(l)) {
-    //   // 过滤出已经存在列表中的歌曲,不存在的歌曲进行添加
-    //   let result = l.filter(
-    //     (item) => list.findIndex((item2) => item2.id === item.id) === -1
-    //   );
-    //   state.sequenceList = [...result, ...list];
-    // } else {
-    //   state.sequenceList = list;
+    // debugger
+    // const idx = list.findIndex(song => {
+    //   return song.id === state.playList[state.currentIndex]?.id
+    // })
+    // if (state.currentIndex !== -1) {
+    //   if (idx > -1) {
+    //     state.currentIndex = idx
+    //   } else {
+    //     // list.push(state.playList[state.currentIndex])
+    //     // debugger
+    //     // state.currentIndex = list.length - 1
+    //   }
     // }
+    state.sequenceList = list
   },
   // 播放器是否全屏状态
   setFullScreen(state, status) {
@@ -208,8 +212,7 @@ export default {
   },
   //将歌曲添加到下一首播放
   addSongNextPlay(state, song) {
-    //  debugger;
-    //debugger;
+    // debugger
     const playList = state.playList.slice()
     const sequenceList = state.sequenceList.slice()
     //当前正在播放歌曲的索引
@@ -218,14 +221,14 @@ export default {
     let playListIndex = playList.findIndex(item => item.id === song.id)
     let sequenceListIndex = sequenceList.findIndex(item => item.id === song.id)
     // 不是播放的状态 && playListIndex === -1
-    if (!state.isPlaying && playList.length === 0) {
-      //debugger;
+    if (!state.isPlaying) {
+      // debugger
       // 往前面插入
-      playList.unshift(song)
+      // playList.unshift(song)
       //state.currentIndex = 0;
       state.playList = playList
-      sequenceList.unshift(song)
-      state.currentIndex = 0
+      // sequenceList.unshift(song)
+      state.currentIndex = playListIndex
       state.isPlaying = true
       state.sequenceList = sequenceList
       Toast('已添加至播放队列')
@@ -248,15 +251,16 @@ export default {
       playList.splice(playListIndex, 1)
       playList.splice(currentPlaySongIndex + 1, 0, song)
       Toast('已添加至播放队列')
+      if (currentPlaySongIndex === -1) {
+        currentPlaySongIndex = playListIndex
+        console.log(currentPlaySongIndex, 'currentPlaySongIndex')
+        state.isPlaying = true
+      }
       if (
         playListIndex < currentPlaySongIndex ||
         playListIndex === playList.length
       ) {
         --currentPlaySongIndex
-      }
-      if (currentPlaySongIndex === -1) {
-        currentPlaySongIndex = 0
-        state.isPlaying = true
       }
       //console.log(state.playList, "state.playListstate.playList");
     } else {

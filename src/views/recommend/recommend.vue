@@ -129,6 +129,7 @@ export default {
         }
         this.$store.commit('setPlayList', this.songs)
         this.$store.commit('setSequenceList', this.songs)
+        //this.$store.commit('setCurrentIndex', -1)
         localStorage.setItem(SINGER_KEY, JSON.stringify(cacheData))
         // storage.set(SINGER_KEY, cacheData);
       }

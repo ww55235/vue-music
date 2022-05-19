@@ -830,6 +830,10 @@ onUnmounted(() => {
 const currentSongIndex = computed(() => store.state.currentIndex)
 const scrollY = ref(0)
 
+watch(currentSongIndex, index => {
+  songNameSwipe.value.swipeTo(index)
+})
+
 async function scrollIngFun(pos) {
   stopLyric()
   //console.log("scrollIngFun");
@@ -993,6 +997,7 @@ async function canplayHandle() {
   await nextTick()
   songNameSwipe.value.resize()
   // console.log(songNameSwipe.value, "songNameSwipe.value");
+  console.log(currentSongIndex.value, 'currentSongIndex.value - canplay')
   songNameSwipe.value.swipeTo(currentSongIndex.value)
 }
 

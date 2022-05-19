@@ -74,78 +74,78 @@ import {
   onUnmounted,
   computed,
   watch,
-} from "vue";
-import { SINGER_KEY } from "@/assets/js/constant";
-import BScroll from "better-scroll";
-import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
-import storage from "storejs";
+} from 'vue'
+import { SINGER_KEY } from '@/assets/js/constant'
+import BScroll from 'better-scroll'
+import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import storage from 'storejs'
 
-import { throttle } from "throttle-debounce";
+import { throttle } from 'throttle-debounce'
 
-import tools from "@/components/tools/tools.vue";
+import tools from '@/components/tools/tools.vue'
 
-const emits = defineEmits(["selectSong", "nextPlay"]);
-const scrollInstance = ref(null);
-const scrollRef = ref(null);
-const scrollWrapperHeight = ref(0);
-const imgWrapperRef = ref(0);
-const imgWrapperHeight = ref(0);
-const musicListRef = ref(0);
-const playListTop = ref(0);
+const emits = defineEmits(['selectSong', 'nextPlay'])
+const scrollInstance = ref(null)
+const scrollRef = ref(null)
+const scrollWrapperHeight = ref(0)
+const imgWrapperRef = ref(0)
+const imgWrapperHeight = ref(0)
+const musicListRef = ref(0)
+const playListTop = ref(0)
 // header区域对应的ref
-const headerRef = ref(null);
-const headerHeight = ref(0);
-const headerZIndex = ref(1);
-const imgWrapperScale = ref({});
-const filterStyle = ref({});
-const router = useRouter();
-const route = useRoute();
+const headerRef = ref(null)
+const headerHeight = ref(0)
+const headerZIndex = ref(1)
+const imgWrapperScale = ref({})
+const filterStyle = ref({})
+const router = useRouter()
+const route = useRoute()
 
-const headerBgColor = ref({});
+const headerBgColor = ref({})
 
 const props = defineProps({
   pic: {
     type: String,
-    default: "",
+    default: '',
   },
   title: {
     type: String,
-    default: "",
+    default: '',
   },
   songs: {
     type: Array,
     default: () => [],
   },
-});
+})
 
 const currentSingerInfo = computed(() => {
-  return store.state.currentSingerInfo;
-});
+  return store.state.currentSingerInfo
+})
 
 //console.log(currentSingerInfo, "currentSingerInfo-store");
 
 const singerInfo = computed(() => {
-  const cacheData = storage.get(SINGER_KEY);
+  const cacheData = storage.get(SINGER_KEY)
   // console.log(cacheData, "cacheData-singerInfo");
-  let res = {};
+  let res = {}
   if (props.title) {
-    res.title = props.title || cacheData.title;
+    res.title = props.title || cacheData.title
   }
   if (props.pic) {
-    res.pic = props.pic || cacheData.pic;
+    res.pic = props.pic || cacheData.pic
   }
   if (props.songs && props.songs.length > 0) {
-    res.songs = props.songs || cacheData.songs;
+    res.songs = props.songs || cacheData.songs
   }
-  return res;
-});
+  return res
+})
 
 onUnmounted(() => {
   // console.log("onUnmounted");
   // 页面离开的时候清除掉
   //sessionStorage.removeItem(SINGER_KEY);
-});
+})
 
 // const headerBgColor = computed(() => {
 //   return headerZIndex.value > 1
@@ -159,13 +159,13 @@ onUnmounted(() => {
 //       };
 // });
 
-const fullScreen = computed(() => store.state.fullScreen);
+const fullScreen = computed(() => store.state.fullScreen)
 
 // scroll 滚动的距离
-const scrollY = ref(0);
-const store = useStore();
+const scrollY = ref(0)
+const store = useStore()
 
-const cacheData = storage.get(SINGER_KEY);
+const cacheData = storage.get(SINGER_KEY)
 //console.log(cacheData, "cacheData++++");
 // if (cacheData && cacheData.pic && cacheData.title && cacheData.songs.length) {
 //   pic.value = cacheData.pic;
@@ -179,51 +179,51 @@ const cacheData = storage.get(SINGER_KEY);
 
 // 添加到下一首歌曲
 function nextPlay(song) {
-  store.commit("addSongNextPlay", song);
-  emits("nextPlay");
+  store.commit('addSongNextPlay', song)
+  emits('nextPlay')
   //console.log(song, "next-play");
 }
 
-watch(fullScreen, async (newFullScreen) => {
+watch(fullScreen, async newFullScreen => {
   // 非全屏的状态,我们需要让scroll重新计算高度
-  await nextTick();
-  scrollInstance.value.refresh();
-});
+  await nextTick()
+  scrollInstance.value.refresh()
+})
 
-const scrollWatchHandle = (newScrollY) => {
+const scrollWatchHandle = newScrollY => {
   // console.log("滚动了");
   //console.log(newScrollY, "newScrollY");
-  let scrollY = 0;
-  let imgWrapperHeightValue = imgWrapperHeight.value;
+  let scrollY = 0
+  let imgWrapperHeightValue = imgWrapperHeight.value
   // 用户向上滚动
   if (newScrollY < 0) {
-    let v = -Math.min(newScrollY, imgWrapperHeight.value);
+    let v = -Math.min(newScrollY, imgWrapperHeight.value)
     //console.log(v, "vv");
     //console.log(v / imgWrapperHeight.value, "v / imgWrapperHeight.value");
-    let blur = (v / imgWrapperHeight.value) * 20;
-    scrollY = Math.abs(newScrollY);
-    let value = scrollY - imgWrapperHeightValue;
+    let blur = (v / imgWrapperHeight.value) * 20
+    scrollY = Math.abs(newScrollY)
+    let value = scrollY - imgWrapperHeightValue
     // console.log(value, "value");
     // console.log(Math.abs(value), "valuevalue");
     // console.log(blur, "blurblurblurblur");
     if (value <= 0) {
-      scrollY = Math.abs(scrollY - imgWrapperHeightValue);
+      scrollY = Math.abs(scrollY - imgWrapperHeightValue)
       // console.log(scrollY, "scrollY");
       // console.log(headerHeight.value, "headerHeight.value");
       if (scrollY <= headerHeight.value) {
         //   console.log(scrollY, "小于header的高度");
         // 那么就让头部层级变高
-        headerZIndex.value = 10;
+        headerZIndex.value = 10
         headerBgColor.value = {
           backgroundColor: `#222222`,
           transition: `all .3s`,
-        };
+        }
       } else {
-        headerZIndex.value = 1;
+        headerZIndex.value = 1
         headerBgColor.value = {
           backgroundColor: `transparent`,
           transition: `all .3s`,
-        };
+        }
         //filterStyle.value = {};
       }
     }
@@ -231,49 +231,49 @@ const scrollWatchHandle = (newScrollY) => {
     filterStyle.value = {
       backdropFilter: `blur(${blur}px)`,
       //filter: `blur(${blur}px)`,
-    };
+    }
     //   console.log(filterStyle.value, "filterStyle.value");
   } else {
     // console.log("用户向下滚动");
-    let scroll = newScrollY;
-    scroll = Math.max(Math.min(scroll, imgWrapperHeight.value), 0);
-    let val = scroll / imgWrapperHeight.value;
+    let scroll = newScrollY
+    scroll = Math.max(Math.min(scroll, imgWrapperHeight.value), 0)
+    let val = scroll / imgWrapperHeight.value
     //console.log(val, "valvalvalvalval");
     // console.log(`scale(${1 + val})`, "scale");
     imgWrapperScale.value = {
       transform: `scale(${1 + val}) translateZ(0px)`,
-    };
+    }
   }
-};
+}
 
-watch(scrollY, scrollWatchHandle);
-watch(props.songs, async (newSongs) => {
+watch(scrollY, scrollWatchHandle)
+watch(props.songs, async newSongs => {
   if (newSongs && newSongs.length > 0) {
-    await nextTick();
-    scrollInstance.value.refresh();
+    await nextTick()
+    scrollInstance.value.refresh()
   }
-});
+})
 
 // 随机播放全部
 function randomPlay() {
-  store.commit("setPlayList", props.songs);
-  store.commit("setSequenceList", props.songs);
-  store.dispatch("randomPlay", {
+  store.commit('setPlayList', props.songs)
+  store.commit('setSequenceList', props.songs)
+  store.dispatch('randomPlay', {
     list: props.songs,
-  });
+  })
 }
 
 function selectSong(song) {
   // console.log(song);
   // debugger;
   // store.commit("addRecentlyPlaySong", song);
-  emits("selectSong", song);
+  emits('selectSong', song)
 }
 
 //scroll 滚动事件回调函数
 function scrollHandle(pos) {
   // console.log("scroll了", pos.y);
-  scrollY.value = pos.y;
+  scrollY.value = pos.y
   //console.log(pos.y, "pos.y");
   //console.log(pos, "possss");
 }
@@ -281,13 +281,13 @@ function scrollHandle(pos) {
 onUnmounted(() => {
   // console.log(props, "props....");
   // console.log("onUnmounted执行了");
-  scrollInstance.value = null;
-});
+  scrollInstance.value = null
+})
 
 onMounted(async () => {
   // console.log(route, "useRoute");
-  await nextTick();
-  const cacheData = storage.get(SINGER_KEY);
+  await nextTick()
+  const cacheData = storage.get(SINGER_KEY)
   // console.log(cacheData, "cacheData333");
   // if (cacheData && cacheData.pic && cacheData.title && cacheData.songs.length) {
   //   pic.value = cacheData.pic;
@@ -301,25 +301,25 @@ onMounted(async () => {
   //   });
   //   return;
   // }
-  await nextTick();
-  headerHeight.value = headerRef.value.clientHeight;
+  await nextTick()
+  headerHeight.value = headerRef.value.clientHeight
   //console.log(headerHeight.value, "headerHeight.valueheaderHeight.value");
   // 获取图片区域的高度
-  let imgClientHeight = imgWrapperRef.value.clientHeight;
+  let imgClientHeight = imgWrapperRef.value.clientHeight
   // console.log(imgClientHeight, "imgClientHeightimgClientHeight");
-  imgWrapperHeight.value = imgClientHeight;
-  playListTop.value = imgClientHeight;
-  scrollWrapperHeight.value = musicListRef.value.clientHeight - imgClientHeight;
+  imgWrapperHeight.value = imgClientHeight
+  playListTop.value = imgClientHeight
+  scrollWrapperHeight.value = musicListRef.value.clientHeight - imgClientHeight
   scrollInstance.value = new BScroll(scrollRef.value, {
     observeDOM: true,
     click: true,
     // 实时派发滚动事件
     probeType: 3,
-  });
-  scrollInstance.value.on("scroll", scrollHandle);
+  })
+  scrollInstance.value.on('scroll', scrollHandle)
   //  console.log(scrollInstance.value, "scrollInstance.value");
   //console.log(props.songs, "o");
-});
+})
 </script>
 
 <style lang="scss" scoped>
