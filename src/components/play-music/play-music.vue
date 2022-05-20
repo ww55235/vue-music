@@ -1166,9 +1166,9 @@ watch(currentTime, async newTime => {
   // playLyric();
   // stopLyric();
   // console.log("currentTime--------");
-  if (isMove.value) {
-    return
-  }
+  // if (isMove.value) {
+  //   return
+  // }
   progressBarWidth.value =
     Math.min(
       Math.max(0, newTime / currentSong.value.duration),
@@ -1328,7 +1328,7 @@ function touchmove(event) {
   //console.log(currentTime, "currentTime////33");
   let v = Math.min(Math.max(value, 0), currentSong.value.duration)
   // console.log(v, "vvvv");
-  progressBarWidth.value = v
+  // progressBarWidth.value = v
 }
 
 // 手指触摸离开
