@@ -4,9 +4,13 @@ import { Toast } from 'vant'
 import NProgress from 'nprogress'
 // 配置禁用加载小圆环
 NProgress.configure({ showSpinner: false })
+//将BASE_IP修改成你购买的服务器对应的公网IP地址
+const BASE_IP = 'http://47.112.208.33'
+// 如果你想通过手机访问 请把 192.168.1.105 修改成你的内网IP 注意手机和电脑连接同一个wifi
+// 打开docs 面板 执行 ipconfig命令 复制IPV4地址替换掉即可
 const baseURL =
   process.env.NODE_ENV === 'production'
-    ? 'http://47.112.208.33:3000'
+    ? `${BASE_IP}:3000`
     : 'http://192.168.1.105:3000/'
 
 const http = axios.create({

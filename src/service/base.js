@@ -6,14 +6,15 @@ NProgress.configure({ showSpinner: false })
 
 const ERR_OK = 0
 
+// 如果你用的是我写的node.js服务器, 那么可以不用做修改()
+// 将BASE_IP修改成你购买的服务器的IP
+const BASE_IP = 'http://47.112.208.33'
+// 修改成你服务器上对应的端口号
+const PORT = 5000
 const baseURL =
-  process.env.NODE_ENV === 'production' ? 'http://47.112.208.33:4000' : '/'
+  process.env.NODE_ENV === 'production' ? `${BASE_IP}:${PORT}` : '/'
 
 axios.defaults.baseURL = baseURL
-
-//const baseURL = process.env.NODE_ENV === "production" ? "/" : "/";
-
-//axios.defaults.baseURL = baseURL;
 
 // 添加请求拦截器
 axios.interceptors.request.use(
